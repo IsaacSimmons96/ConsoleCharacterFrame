@@ -1,0 +1,7 @@
+## Interface: 20502 
+## Title: Console Character Frame
+## Author: Isaac Simmons 
+## Notes: Gives the character frame a console based makeover
+
+ConsoleCharacterFrame.lua
+ConsoleContainerFrame.xml
