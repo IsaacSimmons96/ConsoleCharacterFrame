@@ -24,6 +24,8 @@ local RightBottom =
     "Interface\\AddOns\\ConsoleCharacterFrame\\Textures\\CCF-RightBottom";
 local CharacterFrameLeftBottom =
     "Interface\\AddOns\\ConsoleCharacterFrame\\Textures\\CCF-CharacterFrameLeftBottom";
+local QuestBorder =
+    "Interface\\AddOns\\ConsoleCharacterFrame\\Textures\\UI-Icon-QuestBorder";
 
 HasCreatedTextures = false;
 
@@ -102,43 +104,117 @@ local function SkinFrames()
     ToggleAllBags();
 end
 
-local function MoveItemSlots( id )
-    local baseSize = GetContainerNumSlots(id);
+
+COLUMNMAX = 12
+
+local function MoveItemSlots2()
+
+    local bags = 5;
     local itemButton;
+    local colCounter = 0;
+    local rowCounter = 1;
 
-    for i=1, baseSize, 1 do
-        itemButton = _G["ContainerFrame"..(id + 1).."Item"..i];
-        ContainerFrame = _G["ContainerFrame"..(id + 1)];
+    local slotArray = {GetContainerNumSlots(0),GetContainerNumSlots(1),GetContainerNumSlots(2),GetContainerNumSlots(3),GetContainerNumSlots(4)}
 
-        print("ContainerFrame"..(id + 1))
-        
-        ContainerFrame:SetFrameLevel(1000)
-        ContainerFrame:SetParent(PaperDollFrame)
-        itemButton:ClearAllPoints()
+    for bagIndex = 1, bags, 1 do  
+        for i=1, slotArray[bagIndex], 1 do
 
-        if ( i == 1 ) then
-                itemButton:SetPoint("CENTER",PaperDollFrame,  "CENTER", -75, (40*id));
-        else
-                itemButton:SetPoint("CENTER","ContainerFrame"..(id + 1).."Item"..(i-1),  "CENTER", 40, 0);
-        end
+            local hasAdded = false;
+            itemButton = _G["ContainerFrame"..(bagIndex).."Item"..i];
+            ContainerFrame = _G["ContainerFrame"..(bagIndex)];
+            
+            ContainerFrame:SetFrameLevel(1000);
+            ContainerFrame:SetParent(PaperDollFrame);
+            itemButton:ClearAllPoints();
+
+            if( bagIndex == 1 and i == 1 ) then
+                    itemButton:SetPoint("CENTER",PaperDollFrame,  "CENTER", -70, 155);
+                    hasAdded = true
+                    else
+                        if ( colCounter % COLUMNMAX == 0 and hasAdded == false ) then
+                            itemButton:SetPoint("CENTER",PaperDollFrame,  "CENTER", -70, 155 - (41*rowCounter));                 
+                            rowCounter = rowCounter + 1;         
+                            hasAdded = true;        
+                       else if( i == 1 ) then
+                            itemButton:SetPoint("CENTER","ContainerFrame"..(bagIndex-1).."Item"..(slotArray[bagIndex-1]),  "CENTER", 41, 0);
+                            hasAdded = true;
+                       else
+                           itemButton:SetPoint("CENTER","ContainerFrame"..(bagIndex).."Item"..(i-1),  "CENTER", 41, 0);
+                           end
+                       end
+            end
+
+            local NewTexture = itemButton:CreateTexture("ContainerFrame"..(bagIndex).."Item"..i.."Highlight", "OVERLAY");
+            NewTexture:SetPoint("CENTER");
+            NewTexture:SetWidth(40);
+            NewTexture:SetHeight(40);
+            NewTexture:SetTexture(QuestBorder);
+            NewTexture:Hide()
+
+            colCounter = colCounter + 1;
+        end                            
     end
 end
 
-local function egg()
-    MoveItemSlots(1);
+local function highlightItemButtons(bagID)
+   local slots = GetContainerNumSlots(bagID);
+    for i=1, slots, 1 do 
+        local highlightTexture = _G["ContainerFrame"..(bagID+1).."Item"..i.."Highlight"];
+        highlightTexture:Show();
+    end
 end
 
-local function MoveFrame()
-    ContainerFrame1:SetPoint("BOTTOMRIGHT", ConsoleInventoryMiddle, "BOTTOMRIGHT", -112, -14);
-    ContainerFrame1BackgroundTop:SetTexture("Interface\\AddOns\\ConsoleCharacterFrame\\Textures\\CCF-Bag");
+local function unhighlightItemButtons(bagID)
+   local slots = GetContainerNumSlots(bagID);
+    for i=1, slots, 1 do
+        local highlightTexture = _G["ContainerFrame"..(bagID+1).."Item"..i.."Highlight"];
+        highlightTexture:Hide();
+    end
+end
 
+local function highlightItemsInBag0 ()
+    highlightItemButtons(0);
+end
+local function unhighlightItemsInBag0 ()
+    unhighlightItemButtons(0);
+end
+
+local function highlightItemsInBag1 ()
+    highlightItemButtons(1);
+end
+local function unhighlightItemsInBag1 ()
+    unhighlightItemButtons(1);
+end
+
+local function highlightItemsInBag2 ()
+    highlightItemButtons(2);
+end
+local function unhighlightItemsInBag2 ()
+    unhighlightItemButtons(2);
+end
+
+local function highlightItemsInBag3 ()
+    highlightItemButtons(3);
+end
+local function unhighlightItemsInBag3 ()
+    unhighlightItemButtons(3);
+end
+
+local function highlightItemsInBag4 ()
+    highlightItemButtons(4);
+end
+local function unhighlightItemsInBag4 ()
+    unhighlightItemButtons(4);
+end
+
+
+local function MoveFrame()
     ContainerFrame1:EnableMouse(false);
     ContainerFrame2:EnableMouse(false);
     ContainerFrame3:EnableMouse(false);
     ContainerFrame4:EnableMouse(false);
     ContainerFrame5:EnableMouse(false);
    
-
     ContainerFrame1Name:Hide();
     ContainerFrame1BackgroundTop:Hide();
     ContainerFrame1BackgroundMiddle1:Hide();
@@ -148,7 +224,6 @@ local function MoveFrame()
     ContainerFrame1PortraitButton:Hide();
     ContainerFrame1Portrait:Hide();
 
-    ContainerFrame2:SetPoint("BOTTOMRIGHT", ConsoleInventoryMiddle, "BOTTOMRIGHT", 56, 9);
     ContainerFrame2Name:Hide();
     ContainerFrame2BackgroundTop:Hide();
     ContainerFrame2BackgroundMiddle1:Hide();
@@ -158,7 +233,6 @@ local function MoveFrame()
     ContainerFrame2Portrait:Hide();
 
     ContainerFrame3Name:Hide();
-    ContainerFrame3:SetPoint("BOTTOMRIGHT", ConsoleInventoryMiddle, "BOTTOMRIGHT", -112, -155);
     ContainerFrame3BackgroundTop:Hide();
     ContainerFrame3BackgroundMiddle1:Hide();
     ContainerFrame3BackgroundMiddle2:Hide();
@@ -167,7 +241,6 @@ local function MoveFrame()
     ContainerFrame3Portrait:Hide();
 
     ContainerFrame4Name:Hide();
-    ContainerFrame4:SetPoint("BOTTOMRIGHT", ConsoleInventoryMiddle, "BOTTOMRIGHT", 56, -155);
     ContainerFrame4BackgroundTop:Hide();
     ContainerFrame4BackgroundMiddle1:Hide();
     ContainerFrame4BackgroundMiddle2:Hide();
@@ -176,7 +249,6 @@ local function MoveFrame()
     ContainerFrame4Portrait:Hide();
 
     ContainerFrame5Name:Hide();
-    ContainerFrame5:SetPoint("BOTTOMRIGHT", ConsoleInventoryMiddle, "BOTTOMRIGHT", 224, 9);
     ContainerFrame5BackgroundTop:Hide();
     ContainerFrame5BackgroundMiddle1:Hide();
     ContainerFrame5BackgroundMiddle2:Hide();
@@ -193,42 +265,24 @@ local function MoveFrame()
     ContainerFrame4CloseButton:Hide();
     ContainerFrame5CloseButton:Hide();
 
---     local f = CreateFrame("Frame","Egg",PaperDollFrame)
---     f:SetWidth(1000)
---     f:SetHeight(500)
-
---     local t = f:CreateTexture(nil,"BACKGROUND")
---     t:SetTexture("Interface\\Glues\\CharacterCreate\\UI-Charace-Factions.blp")
---     t:SetAllPoints(f)
---     f.texture = t
-
--- f:SetPoint("CENTER",0,0)
--- f:Show()
-
-    MoveItemSlots(0);
-    MoveItemSlots(1);
-    MoveItemSlots(2);
-    MoveItemSlots(3);
-    MoveItemSlots(4);
+    MoveItemSlots2();
 end
 
 PaperDollFrame:HookScript('OnShow', SkinFrames)
+PaperDollFrame:HookScript('OnShow', MoveFrame)
 PaperDollFrame:HookScript('OnHide', SkinFrames)
-ContainerFrame1:HookScript('OnShow', MoveFrame)
-ContainerFrame2:HookScript('OnShow', MoveFrame)
-ContainerFrame3:HookScript('OnShow', MoveFrame)
-ContainerFrame4:HookScript('OnShow', MoveFrame)
-ContainerFrame5:HookScript('OnShow', MoveFrame)
 
+MainMenuBarBackpackButton:HookScript('OnEnter', highlightItemsInBag0)
+MainMenuBarBackpackButton:HookScript('OnLeave', unhighlightItemsInBag0)
 
+CharacterBag0Slot:HookScript('OnEnter', highlightItemsInBag1)
+CharacterBag0Slot:HookScript('OnLeave', unhighlightItemsInBag1)
 
-    
---     itemButton:Show();
--- end
--- if (id == 0 and secured and not IsTutorialFlagged(TUTORIAL_BAG_SLOTS_AUTHENTICATOR)) then
---     TriggerTutorial(TUTORIAL_BAG_SLOTS_AUTHENTICATOR);
--- end
--- end
--- for i=size + 1, MAX_CONTAINER_ITEMS, 1 do
--- _G[name.."Item"..i]:Hide();
--- end
+CharacterBag1Slot:HookScript('OnEnter', highlightItemsInBag2)
+CharacterBag1Slot:HookScript('OnLeave', unhighlightItemsInBag2)
+
+CharacterBag2Slot:HookScript('OnEnter', highlightItemsInBag3)
+CharacterBag2Slot:HookScript('OnLeave', unhighlightItemsInBag3)
+
+CharacterBag3Slot:HookScript('OnEnter', highlightItemsInBag4)
+CharacterBag3Slot:HookScript('OnLeave', unhighlightItemsInBag4)
